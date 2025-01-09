@@ -1,5 +1,7 @@
 const express = require('express');
 const { Worker } = require('worker_threads');
+const os = require('os');
+const workerThreads = os.cpus().length/2; 
 
 const app = express();
 app.use(express.json());
@@ -29,8 +31,8 @@ function createWorker(threadCount) {
 app.get('/blocking', async (req, res) => {
     try {
         const workerPromises = [];
-        for (let i = 0; i < 4; i++) {
-            workerPromises.push(createWorker(4)); // Pass thread count
+        for (let i = 0; i < workerThreads; i++) {
+            workerPromises.push(createWorker(workerThreads)); // Pass thread count
         }
 
         const threadResults = await Promise.all(workerPromises);
